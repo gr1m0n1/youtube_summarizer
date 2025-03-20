@@ -41,7 +41,7 @@ def format_timestamp(t):
     mi = (t - int(t))*1000
     return f"{int(hh):02d}:{int(mm):02d}:{int(ss):02d},{int(mi):03d}"
 
-def summarize(prompt: str, messages: list, ollama_host:str, ollama_model:str) -> str:
+def summarize(prompt: str, ollama_host:str, ollama_model:str) -> str:
     """Summarizes messages using an Ollama LLM model."""
     if not messages:
         return "No messages to summarize."
@@ -50,9 +50,7 @@ def summarize(prompt: str, messages: list, ollama_host:str, ollama_model:str) ->
     ollama_client = ollama.Client(ollama_host)
 
     start_time = datetime.now()
-    # full_prompt = "Verifica que la respuesta se ajusta a lo que se ha preguntado.\n\nMensajes del último día\n".join(messages) + "\n\nMensajes de días anteriores\n".join(additional_messages) + "\n\n" + prompt
-    full_prompt = "Verifica que la respuesta se ajusta a lo que se ha preguntado.\n\nMensajes del último día\n".join(messages) + "\n\n" + prompt
-    response = ollama_client.chat(model=ollama_model, messages=[{"role": "user", "content": full_prompt}])
+    response = ollama_client.chat(model=ollama_model, messages=[{"role": "user", "content": prompt}])
     logger.info(f" - Generated Summary Response in {datetime.now() - start_time} time")
 
     return response.get("message", dict()).get("content", "")
@@ -67,4 +65,8 @@ format = "None"
 
 transcript = get_transcript(url, model_size, lang, format)
 
+promt = "Sumariza la transcripción que te incluyo a continuación.\nTranscripción:\n" + transcript
 print(transcript)
+
+summary = summarize(promt, "localhost:11434", "qwen2.5:7b")
+print(summary)
