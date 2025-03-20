@@ -43,7 +43,7 @@ def format_timestamp(t):
 
 def summarize(prompt: str, ollama_host:str, ollama_model:str) -> str:
     """Summarizes messages using an Ollama LLM model."""
-    if not messages:
+    if not prompt:
         return "No messages to summarize."
 
     logger.info(f" - Generating Summary with Ollama (model {ollama_model} on host {ollama_host}) ...")
